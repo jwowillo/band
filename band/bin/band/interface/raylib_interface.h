@@ -14,14 +14,6 @@ namespace interface {
 // The 'raylib' include is purposely excluded from the header file to prevent it
 // from being included in other translation-units.
 
-// WindowInfo describes a window.
-struct WindowInfo {
-  WindowArea area;
-  Text name;
-  Size fps;
-  ImageId icon;
-};
-
 // RaylibInterface uses raylib to implement an interface.
 class RaylibInterface : public Interface {
   public:
@@ -37,9 +29,15 @@ class RaylibInterface : public Interface {
     RaylibInterface& operator=(const RaylibInterface&&) = delete;
 
     // Open if not already open.
-    void Open(const WindowInfo& window_info);
+    void Open();
     // Close if not already closed.
     void Close();
+
+    void SetTargetFps(Size fps) override;
+    void SetWindowArea(const ::band::WindowArea& area) override;
+    void SetIcon(ImageId id) override;
+    void SetTitle(const Text& text) override;
+    void ToggleFullscreen() override;
 
     void StartDrawing() override;
     void StopDrawing() override;
@@ -87,7 +85,6 @@ class RaylibInterface : public Interface {
     struct TextureType;
     struct FontType;
 
-    WindowInfo window_info_;
     bool is_open_;
 
     std::unordered_map<ImageId, std::unique_ptr<ImageType>> images_;

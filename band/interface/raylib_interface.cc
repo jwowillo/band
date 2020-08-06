@@ -136,7 +136,7 @@ struct RaylibInterface::FontType {
 };
 
 RaylibInterface::RaylibInterface() :
-  window_info_{}, is_open_{false},
+  is_open_{false},
   images_{}, textures_{}, fonts_{},
   next_image_id_{}, next_texture_id_{}, next_font_id_{},
   key_pressed_{} { }
@@ -145,18 +145,11 @@ RaylibInterface::~RaylibInterface() {
   Close();
 }
 
-void RaylibInterface::Open(const WindowInfo& window_info) {
-  window_info_ = window_info;
-
+void RaylibInterface::Open() {
   ::SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-  ::InitWindow(
-      window_info_.area.width, window_info_.area.height,
-      window_info_.name.c_str());
-  ::SetTargetFPS(window_info_.fps);
-
-  if (images_.find(window_info_.icon) != images_.end()) {
-    ::SetWindowIcon(images_.at(window_info_.icon)->image);
-  }
+  // Need to set this to have at-least one value so the window isn't
+  // auto-fullscreened.
+  ::InitWindow(1, 0, "");
 
   is_open_ = true;
 }
@@ -166,13 +159,40 @@ void RaylibInterface::Close() {
     return;
   }
 
-  DeleteAllImages();
+  // Deleting the images on exit causes segfaults.
+
   DeleteAllTextures();
   DeleteAllFonts();
 
   ::CloseWindow();
 
   is_open_ = false;
+}
+
+void RaylibInterface::SetTargetFps(Size fps) {
+  ::SetTargetFPS(fps);
+}
+
+void RaylibInterface::SetWindowArea(const ::band::WindowArea& area) {
+  ::SetWindowSize(
+      static_cast<int>(std::round(area.width)),
+      static_cast<int>(std::round(area.height)));
+}
+
+void RaylibInterface::SetIcon(ImageId id) {
+  if (images_.find(id) == images_.end()) {
+    return;
+  }
+
+  ::SetWindowIcon(images_.at(id)->image);
+}
+
+void RaylibInterface::SetTitle(const Text& text) {
+  ::SetWindowTitle(text.c_str());
+}
+
+void RaylibInterface::ToggleFullscreen() {
+  ::ToggleFullscreen();
 }
 
 ImageId RaylibInterface::LoadImage(const File& file) {

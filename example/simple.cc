@@ -3,16 +3,19 @@
 #include "example/icon.image.h"
 
 int main() {
-  std::unique_ptr<band::Interface> interface = band::DefaultInterface(
-      band::WindowArea{
-        .width = 1024.0,
-        .height = 1024.0 },
-      "simple", Icon(), 60u);
+  std::unique_ptr<band::Interface> interface = band::DefaultInterface();
+
+  interface->SetTitle("simple");
+  interface->SetTargetFps(60u);
+  interface->SetWindowArea(band::WindowArea{ .width = 1024.0, .height = 1024.0 });
 
   band::Dimension text_size{ .scalar = 0.05, .unit = band::Unit::kRatio };
   band::Dimension middle{ .scalar = 0.5, .unit = band::Unit::kRatio };
 
   band::FontId font_id = interface->LoadFont(band::asset::font::Helvetica());
+  band::ImageId icon_id = interface->LoadImage(Icon());
+
+  interface->SetIcon(icon_id);
 
   while (!interface->HasAction(band::Action::kClose)) {
     interface->StartDrawing();

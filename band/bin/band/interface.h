@@ -133,6 +133,12 @@ class Interface {
   public:
     virtual ~Interface() = default;
 
+    virtual void SetTargetFps(Size fps) = 0;
+    virtual void SetWindowArea(const ::band::WindowArea& area) = 0;
+    virtual void SetIcon(ImageId id) = 0;
+    virtual void SetTitle(const Text& text) = 0;
+    virtual void ToggleFullscreen() = 0;
+
     virtual void StartDrawing() = 0;
     virtual void StopDrawing() = 0;
 
@@ -187,18 +193,10 @@ class Interface {
 
 };
 
-// DefaultInterface constructs the default-interface initialized with the passed
-// parameters.
+// DefaultInterface constructs the default-interface.
 //
 // This allows clients to avoid knowing the details of a specific interface and
 // how it needs to be opened.
-//
-// Initial window-parameters are passed so that the screen can have the right
-// attributes the first time it opens instead of being quickly modified.
-std::unique_ptr<Interface> DefaultInterface(
-    const WindowArea& window_area,
-    const Text& window_name,
-    const std::optional<File>& icon_file,
-    Size target_fps);
+std::unique_ptr<Interface> DefaultInterface();
 
 }  // namespace band
