@@ -24,3 +24,13 @@
   `pthread` should be linked. These aren't a dependency for all platforms so
   they are left to the consumer to link. An example can be seen in the
   'Makefile' in the 'example' folder.
+
+## Feature-Requests
+
+* Create a issue with the label 'enchancement'. It will be groomed then sorted
+  into a release to be worked on.
+
+## Contributing
+
+* Any task or feature-request can be worked on before being groomed on its own
+  branch. If the feature is desired, it will be merged until a release.
