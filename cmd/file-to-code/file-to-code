@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+import os.path
+import sys
+
+working_directory = sys.argv[1]
+input_path = sys.argv[2]
+output_path = sys.argv[3]
+name = sys.argv[4]
+namespace = sys.argv[5]
+
+bs = []
+with open(os.path.join(working_directory, input_path), 'rb') as f:
+    while True:
+        b = f.read(1)
+        if len(b) == 0:
+            break
+        bs.append(hex(ord(b)))
+
+combined = ', '.join(bs)
+
+header_path = os.path.join(working_directory, output_path + '.h')
+
+parts = namespace.split('::')
+
+if len(parts) == 1 and parts[0] == '':
+    parts = []
+
+
+with open(header_path, 'w') as f:
+    print('#pragma once', file=f)
+    print(file=f)
+    print('#include "band/interface.h"', file=f)
+
+    if len(parts) != 0:
+        print(file=f)
+
+    for part in parts:
+        print(f'namespace {part} {{', file=f)
+
+    print(file=f)
+
+    print(f'band::File {name}();', file=f)
+
+    if len(parts) != 0:
+        print(file=f)
+
+    for part in parts:
+        print(f'}}  // namespace {part}', file=f)
+
+with open(os.path.join(working_directory, output_path + ".cc"), 'w') as f:
+    print(f'#include "{output_path}.h"', file=f)
+    print(file=f)
+    print('#include <array>', file=f)
+    print('#include <cstdint>', file=f)
+
+    if len(parts) != 0:
+        print(file=f)
+
+    for part in parts:
+        print(f'namespace {part} {{', file=f)
+
+    print(file=f)
+    print('namespace {', file=f)
+    print('', file=f)
+    print(f'constexpr std::array<uint8_t, {len(bs)}> k{name}Bytes{{{combined}}};', file=f)
+    print('', file=f)
+    print('}  // namespace', file=f)
+    print(file=f)
+
+    print(f'band::File {name}() {{', file=f)
+    print('  return band::File{', file=f)
+    print(f'    .bytes = k{name}Bytes.data(),', file=f)
+    print(f'    .n = {len(bs)}', file=f)
+    print('  };', file=f)
+    print('}', file=f)
+
+    if len(parts) != 0:
+        print(file=f)
+
+    for part in parts:
+        print(f'}}  // namespace {part}', file=f)
