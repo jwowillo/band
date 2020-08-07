@@ -81,6 +81,8 @@ class RaylibInterface : public Interface {
     ::band::WindowArea WindowArea() const override;
 
   private:
+    ::band::WindowArea DrawArea() const;
+
     struct ImageType;
     struct TextureType;
     struct FontType;
@@ -96,6 +98,7 @@ class RaylibInterface : public Interface {
 
     std::optional<uint32_t> key_pressed_;
 
+    std::optional<TextureId> selected_texture_;
 };
 
 }  // namespace interface

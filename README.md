@@ -11,7 +11,8 @@
 
 * `make` in the root-directory builds documentation.
 * `make` in the 'band'-dierctory builds `band` into a static-library.
-* `make` in the 'example'-directory builds all the examples.
+* `make` in the 'example'-directory builds all the examples. A `make clean`
+  should be run before if the library itself was actually modified.
 
 ## Running
 

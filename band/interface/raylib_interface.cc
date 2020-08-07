@@ -139,7 +139,7 @@ RaylibInterface::RaylibInterface() :
   is_open_{false},
   images_{}, textures_{}, fonts_{},
   next_image_id_{}, next_texture_id_{}, next_font_id_{},
-  key_pressed_{} { }
+  key_pressed_{}, selected_texture_{} { }
 
 RaylibInterface::~RaylibInterface() {
   Close();
@@ -149,7 +149,7 @@ void RaylibInterface::Open() {
   ::SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   // Need to set this to have at-least one value so the window isn't
   // auto-fullscreened.
-  ::InitWindow(1, 0, "");
+  ::InitWindow(1024, 1024, "");
 
   is_open_ = true;
 }
@@ -159,10 +159,7 @@ void RaylibInterface::Close() {
     return;
   }
 
-  // Deleting the images on exit causes segfaults.
-
-  DeleteAllTextures();
-  DeleteAllFonts();
+  // Deleting resources on exit causes segfaults.
 
   ::CloseWindow();
 
@@ -261,10 +258,10 @@ void RaylibInterface::DeleteAllFonts() {
 }
 
 TextureId RaylibInterface::CreateBlankTexture(const Area& area) {
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real width = ConvertDimensionToPixel(area.width, window_area.width);
-  Real height = ConvertDimensionToPixel(area.height, window_area.height);
+  Real width = ConvertDimensionToPixel(area.width, draw_area.width);
+  Real height = ConvertDimensionToPixel(area.height, draw_area.height);
 
   ::RenderTexture2D texture_target = ::LoadRenderTexture(
       std::round(width), std::round(height));
@@ -281,9 +278,9 @@ TextureId RaylibInterface::CreateImageTexture(ImageId id, const Area& area) {
     return 0u;
   }
 
-  ::band::WindowArea window_area = WindowArea();
-  Real width = ConvertDimensionToPixel(area.width, window_area.width);
-  Real height = ConvertDimensionToPixel(area.height, window_area.height);
+  ::band::WindowArea draw_area = DrawArea();
+  Real width = ConvertDimensionToPixel(area.width, draw_area.width);
+  Real height = ConvertDimensionToPixel(area.height, draw_area.height);
 
   ::Image copy = ::ImageCopy(images_.at(id)->image);
   ::ImageResize(&copy, std::round(width), std::round(height));
@@ -326,15 +323,22 @@ void RaylibInterface::DeleteAllTextures() {
 }
 
 void RaylibInterface::SelectTexture(TextureId id) {
-  if (textures_.find(id) == textures_.end()) {
+  if (selected_texture_.has_value() ||
+      textures_.find(id) == textures_.end()) {
     return;
   }
 
   ::BeginTextureMode(textures_.at(id)->target);
+  selected_texture_ = id;
 }
 
 void RaylibInterface::UnselectTexture() {
+  if (!selected_texture_.has_value()) {
+    return;
+  }
+
   ::EndTextureMode();
+  selected_texture_ = std::nullopt;
 }
 
 void RaylibInterface::DrawTexture(TextureId id, const Point& position) {
@@ -342,10 +346,10 @@ void RaylibInterface::DrawTexture(TextureId id, const Point& position) {
     return;
   }
 
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real x = ConvertDimensionToPixel(position.x, window_area.width);
-  Real y = ConvertDimensionToPixel(position.y, window_area.height);
+  Real x = ConvertDimensionToPixel(position.x, draw_area.width);
+  Real y = ConvertDimensionToPixel(position.y, draw_area.height);
 
   DrawTextureRec(
       textures_.at(id)->target.texture,
@@ -366,25 +370,17 @@ void RaylibInterface::Clear(const Color& color) {
 void RaylibInterface::DrawLine(
     const Line& line, const Dimension& thickness,
     const Leg& leg, const Color& color) {
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real ax = leg == Leg::kWidth ?
-    ConvertDimensionToPixel(line.a.x, window_area.width) :
-    ConvertDimensionToPixel(line.a.x, window_area.height);
-  Real ay = leg == Leg::kWidth ?
-    ConvertDimensionToPixel(line.a.y, window_area.width) :
-    ConvertDimensionToPixel(line.a.y, window_area.height);
+  Real ax = ConvertDimensionToPixel(line.a.x, draw_area.width);
+  Real ay = ConvertDimensionToPixel(line.a.y, draw_area.height);
 
-  Real bx = leg == Leg::kWidth ?
-    ConvertDimensionToPixel(line.b.x, window_area.width) :
-    ConvertDimensionToPixel(line.b.x, window_area.height);
-  Real by = leg == Leg::kWidth ?
-    ConvertDimensionToPixel(line.b.y, window_area.width) :
-    ConvertDimensionToPixel(line.b.y, window_area.height);
+  Real bx = ConvertDimensionToPixel(line.b.x, draw_area.width);
+  Real by = ConvertDimensionToPixel(line.b.y, draw_area.height);
 
   Real real_thickness = leg == Leg::kWidth ?
-    ConvertDimensionToPixel(thickness, window_area.width) :
-    ConvertDimensionToPixel(thickness, window_area.height);
+    ConvertDimensionToPixel(thickness, draw_area.width) :
+    ConvertDimensionToPixel(thickness, draw_area.height);
 
   DrawLineEx(
       ::Vector2{
@@ -401,14 +397,14 @@ void RaylibInterface::DrawLine(
 
 void RaylibInterface::DrawCircle(
     const Circle& circle, const Leg& leg, const Color& color) {
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real x = ConvertDimensionToPixel(circle.center.x, window_area.width);
-  Real y = ConvertDimensionToPixel(circle.center.y, window_area.height);
+  Real x = ConvertDimensionToPixel(circle.center.x, draw_area.width);
+  Real y = ConvertDimensionToPixel(circle.center.y, draw_area.height);
 
   Real radius = leg == Leg::kWidth ?
-    ConvertDimensionToPixel(circle.radius, window_area.width) :
-    ConvertDimensionToPixel(circle.radius, window_area.height);
+    ConvertDimensionToPixel(circle.radius, draw_area.width) :
+    ConvertDimensionToPixel(circle.radius, draw_area.height);
 
   ::DrawCircleV(
       ::Vector2{
@@ -421,12 +417,12 @@ void RaylibInterface::DrawCircle(
 
 void RaylibInterface::DrawRectangle(
     const Rectangle& rectangle, const Color& color) {
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real ax = ConvertDimensionToPixel(rectangle.bottom_left.x, window_area.width);
-  Real ay = ConvertDimensionToPixel(rectangle.bottom_left.y, window_area.height);
-  Real bx = ConvertDimensionToPixel(rectangle.top_right.x, window_area.width);
-  Real by = ConvertDimensionToPixel(rectangle.top_right.y, window_area.height);
+  Real ax = ConvertDimensionToPixel(rectangle.bottom_left.x, draw_area.width);
+  Real ay = ConvertDimensionToPixel(rectangle.bottom_left.y, draw_area.height);
+  Real bx = ConvertDimensionToPixel(rectangle.top_right.x, draw_area.width);
+  Real by = ConvertDimensionToPixel(rectangle.top_right.y, draw_area.height);
 
   ::DrawRectangleV(
       ::Vector2{
@@ -442,14 +438,14 @@ void RaylibInterface::DrawRectangle(
 
 void RaylibInterface::DrawTriangle(
     const Triangle& triangle, const Color& color) {
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real ax = ConvertDimensionToPixel(triangle.a.x, window_area.width);
-  Real ay = ConvertDimensionToPixel(triangle.a.y, window_area.height);
-  Real bx = ConvertDimensionToPixel(triangle.b.x, window_area.width);
-  Real by = ConvertDimensionToPixel(triangle.b.y, window_area.height);
-  Real cx = ConvertDimensionToPixel(triangle.c.x, window_area.width);
-  Real cy = ConvertDimensionToPixel(triangle.c.y, window_area.height);
+  Real ax = ConvertDimensionToPixel(triangle.a.x, draw_area.width);
+  Real ay = ConvertDimensionToPixel(triangle.a.y, draw_area.height);
+  Real bx = ConvertDimensionToPixel(triangle.b.x, draw_area.width);
+  Real by = ConvertDimensionToPixel(triangle.b.y, draw_area.height);
+  Real cx = ConvertDimensionToPixel(triangle.c.x, draw_area.width);
+  Real cy = ConvertDimensionToPixel(triangle.c.y, draw_area.height);
 
   ::DrawTriangle(
       ::Vector2{ .x = static_cast<float>(ax), .y = static_cast<float>(ay) },
@@ -468,11 +464,11 @@ void RaylibInterface::DrawText(
 
   ::Font font = fonts_.at(id)->font;
 
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real x = ConvertDimensionToPixel(position.x, window_area.width);
-  Real y = ConvertDimensionToPixel(position.y, window_area.height);
-  Size size = static_cast<Size>(ConvertDimensionToPixel(dimension, window_area.height));
+  Real x = ConvertDimensionToPixel(position.x, draw_area.width);
+  Real y = ConvertDimensionToPixel(position.y, draw_area.height);
+  Size size = static_cast<Size>(ConvertDimensionToPixel(dimension, draw_area.height));
 
   float spacing = size / 10.0;
   ::Vector2 p{ .x = static_cast<float>(x), .y = static_cast<float>(y) };
@@ -484,10 +480,10 @@ void RaylibInterface::DrawText(
 }
 
 void RaylibInterface::DrawFps(const Point& position) {
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  Real x = ConvertDimensionToPixel(position.x, window_area.width);
-  Real y = ConvertDimensionToPixel(position.y, window_area.height);
+  Real x = ConvertDimensionToPixel(position.x, draw_area.width);
+  Real y = ConvertDimensionToPixel(position.y, draw_area.height);
 
   ::DrawFPS(std::round(x), std::round(y));
 }
@@ -501,9 +497,9 @@ Area RaylibInterface::MeasureText(
 
   ::Font font = fonts_.at(id)->font;
 
-  ::band::WindowArea window_area = WindowArea();
+  ::band::WindowArea draw_area = DrawArea();
 
-  float size = static_cast<float>(ConvertDimensionToPixel(dimension, window_area.height));
+  float size = static_cast<float>(ConvertDimensionToPixel(dimension, draw_area.height));
 
   float spacing = size / 10.0;
 
@@ -574,6 +570,21 @@ Point RaylibInterface::MousePosition() const {
 }
 
 ::band::WindowArea RaylibInterface::WindowArea() const {
+  return ::band::WindowArea{
+    .width = static_cast<Real>(::GetScreenWidth()),
+    .height = static_cast<Real>(::GetScreenHeight())
+  };
+}
+
+::band::WindowArea RaylibInterface::DrawArea() const {
+  if (selected_texture_.has_value() &&
+      textures_.find(selected_texture_.value()) != textures_.end()) {
+    return ::band::WindowArea{
+      .width = static_cast<Real>(textures_.at(selected_texture_.value())->target.texture.width),
+      .height = static_cast<Real>(textures_.at(selected_texture_.value())->target.texture.height)
+    };
+  }
+
   return ::band::WindowArea{
     .width = static_cast<Real>(::GetScreenWidth()),
     .height = static_cast<Real>(::GetScreenHeight())

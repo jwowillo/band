@@ -35,10 +35,64 @@ int main() {
         text_size,
         band::Color{ .r = 0x00, .g = 0x00, .b = 0x00, .a = 0xff },
         font_id);
+
+    interface->DrawTriangle(band::Triangle{
+        .a = band::Point{
+          .x = band::Dimension{ .scalar = 0.4, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 0.1, . unit = band::Unit::kRatio }
+        },
+        .b = band::Point{
+          .x = band::Dimension{ .scalar = 0.3, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 0.1, . unit = band::Unit::kRatio }
+        },
+        .c = band::Point{
+          .x = band::Dimension{ .scalar = 0.4, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 0.2, . unit = band::Unit::kRatio }
+        } },
+        band::Color{ .r = 0xff, .g = 0x00, .b = 0x00, .a = 0xff });
+
+    interface->DrawLine(band::Line{
+        .a = band::Point{
+          .x = band::Dimension{ .scalar = 0.8, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 0.6, . unit = band::Unit::kRatio }
+        },
+        .b = band::Point{
+          .x = band::Dimension{ .scalar = 0.6, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 0.8, . unit = band::Unit::kRatio }
+        } },
+        band::Dimension{ .scalar = 0.01, .unit = band::Unit::kRatio },
+        band::Leg::kHeight,
+        band::Color{ .r = 0x00, .g = 0xff, .b = 0x00, .a = 0xff });
+
     interface->DrawFps(band::Point{
         .x = band::Dimension{ .scalar = 0.0, .unit = band::Unit::kRatio },
         .y = band::Dimension{ .scalar = 0.0, .unit = band::Unit::kRatio } });
 
+    band::TextureId texture_id = interface->CreateBlankTexture(band::Area{
+        .width = band::Dimension{ .scalar = 0.2, .unit = band::Unit::kRatio },
+        .height = band::Dimension{ .scalar = 0.15, .unit = band::Unit::kRatio } });
+    interface->SelectTexture(texture_id);
+    interface->DrawTriangle(band::Triangle{
+        .a = band::Point{
+          .x = band::Dimension{ .scalar = 0.0, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 1.0, . unit = band::Unit::kRatio }
+        },
+        .b = band::Point{
+          .x = band::Dimension{ .scalar = 1.0, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 1.0, . unit = band::Unit::kRatio }
+        },
+        .c = band::Point{
+          .x = band::Dimension{ .scalar = 0.5, .unit = band::Unit::kRatio },
+          .y = band::Dimension{ .scalar = 0.0, . unit = band::Unit::kRatio }
+        } },
+        band::Color{ .r = 0x00, .g = 0x00, .b = 0xff, .a = 0xff });
+    interface->UnselectTexture();
+    interface->DrawTexture(texture_id, band::Point{
+        .x = band::Dimension{ .scalar = 0.1, .unit = band::Unit::kRatio },
+        .y = band::Dimension{ .scalar = 0.6, .unit = band::Unit::kRatio } });
+
     interface->StopDrawing();
+
+    interface->DeleteTexture(texture_id);
   }
 }

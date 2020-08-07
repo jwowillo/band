@@ -15,6 +15,7 @@ namespace band {
 // providing more complex types for the aliases less of an undertaking in the
 // future.
 
+// File is a wrapper around the bytes of a file.
 struct File {
   const uint8_t* bytes;
   const size_t n;
@@ -170,6 +171,7 @@ class Interface {
         const Circle& circle, const Leg& leg, const Color& color) = 0;
     virtual void DrawRectangle(
         const Rectangle& rectangle, const Color& color) = 0;
+    // DrawTriangle with points specified in counter-clockwise order.
     virtual void DrawTriangle(const Triangle& triangle, const Color& color) = 0;
     // DrawText where each character has a dimension with ratio relative to the
     // window's height.
