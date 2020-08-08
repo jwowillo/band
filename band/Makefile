@@ -3,6 +3,7 @@
 FLAGS = -g -Werror -Wall -Wextra -O2 -std=c++17 -fstack-protector -I .. -I../lib/raylib-2.6.0/src
 
 SRCS =
+SRCS += control.cc
 SRCS += interface.cc
 SRCS += interface/raylib_interface.cc
 SRCS += asset/font/helvetica.font.cc
@@ -11,6 +12,7 @@ DEPS = $(subst .cc,.d,$(SRCS))
 
 HEADERS =
 HEADERS += all.h
+HEADERS += control.h
 HEADERS += interface.h
 HEADERS += interface/raylib_interface.h
 HEADERS += asset/font/helvetica.font.h

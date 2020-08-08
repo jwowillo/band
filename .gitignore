@@ -3,3 +3,4 @@
 *.a
 lib/raylib-2.6.0
 *bin*
+*.swp

@@ -130,6 +130,9 @@ enum class Leg { kWidth, kHeight };
 //
 // StartDrawing must be called before each frame and StopDrawing must be called
 // after each frame.
+//
+// The positive horizontal-drawing-axis goes from left-to-right and the positive
+// vertical-drawing-axis goes from top-to-bottom.
 class Interface {
   public:
     virtual ~Interface() = default;
