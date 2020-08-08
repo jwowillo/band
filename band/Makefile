@@ -4,7 +4,8 @@ FLAGS = -g -Werror -Wall -Wextra -O2 -std=c++17 -fstack-protector -I .. -I../lib
 
 SRCS =
 SRCS += control.cc
-SRCS += control_factory.cc
+SRCS += stage.cc
+SRCS += styler.cc
 SRCS += interface.cc
 SRCS += interface/raylib_interface.cc
 SRCS += asset/font/helvetica.font.cc
@@ -13,11 +14,12 @@ DEPS = $(subst .cc,.d,$(SRCS))
 
 HEADERS =
 HEADERS += all.h
+HEADERS += asset/font/helvetica.font.h
 HEADERS += control.h
-HEADERS += control_factory.h
 HEADERS += interface.h
 HEADERS += interface/raylib_interface.h
-HEADERS += asset/font/helvetica.font.h
+HEADERS += stage.h
+HEADERS += styler.h
 
 VERSION = v2.0.0-dev
 
