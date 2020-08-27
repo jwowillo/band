@@ -39,6 +39,14 @@ using ImageId = size_t;
 // interface-dependent.
 using FontId = size_t;
 
+// Alignment in an area.
+//
+// If the direction of something is horizontal, top is left and bottom is right.
+enum class Alignment { kTop, kMiddle, kBottom };
+
+// Direction in an area.
+enum class Direction { kHorizontal, kVertical };
+
 // Unit for a dimension.
 //
 // A pixel is the atomic unit on a window. A ratio is a propersion of a pixel
@@ -50,9 +58,23 @@ using Real = double;
 
 // Dimension has a scalar value and a unit.
 struct Dimension {
-  Real scalar;
-  Unit unit;
+  Real scalar = 0.0;
+  Unit unit{};
 };
+bool operator==(const Dimension& a, const Dimension& b);
+bool operator!=(const Dimension& a, const Dimension& b);
+
+// IsDimensionGreaterThanOrEqualTo returns if 'a' is greater than or equal to
+// b.
+bool IsDimensionGreaterThanOrEqualTo(
+    const Dimension& a, const Dimension& b,
+    Real pixels);
+
+// MaxDimension determines the max of 'a' and 'b' depending on the 'pixels'.
+Dimension MaxDimension(const Dimension& a, const Dimension& b, Real pixels);
+
+// MinDimension determines the min of 'a' and 'b' depending on the 'pixels'.
+Dimension MinDimension(const Dimension& a, const Dimension& b, Real pixels);
 
 // AddDimensions adds 'a' and 'b' depending on the 'pixels'.
 Dimension AddDimensions(const Dimension& a, const Dimension& b, Real pixels);
@@ -61,65 +83,70 @@ Dimension AddDimensions(const Dimension& a, const Dimension& b, Real pixels);
 Dimension SubtractDimensions(
     const Dimension& a, const Dimension& b, Real pixels);
 
-// MultiplyDimensions multiplies the dimension by the scalar.
-Dimension MultiplyDimensions(const Dimension& a, Real scalar);
+// MultiplyDimension multiplies the dimension by the scalar.
+Dimension MultiplyDimension(const Dimension& a, Real scalar);
 
 // Point.
 struct Point {
-  Dimension x;
-  Dimension y;
+  Dimension x{};
+  Dimension y{};
 };
+bool operator!=(const Point& a, const Point& b);
 
 // Line.
 struct Line {
-  Point a;
-  Point b;
+  Point a{};
+  Point b{};
 };
+bool operator!=(const Line& a, const Line& b);
 
 // Circle.
 struct Circle {
-  Point center;
-  Dimension radius;
+  Point center{};
+  Dimension radius{};
 };
+bool operator!=(const Circle& a, const Circle& b);
 
 // Triangle.
 struct Triangle {
-  Point a;
-  Point b;
-  Point c;
+  Point a{};
+  Point b{};
+  Point c{};
 };
+bool operator!=(const Triangle& a, const Triangle& b);
 
 // Rectangle.
 struct Rectangle {
-  Point bottom_left;
-  Point top_right;
+  Point bottom_left{};
+  Point top_right{};
 };
+bool operator!=(const Rectangle& a, const Rectangle& b);
 
 // Area.
 struct Area {
-  Dimension width;
-  Dimension height;
+  Dimension width{};
+  Dimension height{};
 };
+bool operator!=(const Area& a, const Area& b);
 
 // WindowArea is just like an area but always specified in pixels.
 struct WindowArea {
-  Real width;
-  Real height;
+  Real width{};
+  Real height{};
 };
+bool operator!=(const WindowArea& a, const WindowArea& b);
 
 // Component of a color.
 using Component = uint8_t;
 
 // Color has red, green, blue, and opacity components.
 struct Color {
-  Component r;
-  Component g;
-  Component b;
-  Component a;
+  Component r{};
+  Component g{};
+  Component b{};
+  Component a{};
 };
-
-// Action that can be performed on the interface.
-enum class Action { kLeftClick, kRightClick, kClose, kBackspace };
+bool operator!=(const Color& a, const Color& b);
 
 // Leg of a rectangle.
 enum class Leg { kWidth, kHeight };
@@ -135,6 +162,8 @@ enum class Leg { kWidth, kHeight };
 // vertical-drawing-axis goes from top-to-bottom.
 class Interface {
   public:
+    enum class Action { kLeftClick, kRightClick, kClose, kBackspace };
+
     virtual ~Interface() = default;
 
     virtual void SetTargetFps(Size fps) = 0;

@@ -2,6 +2,9 @@
 
 `band` is a c++ media-library.
 
+The focus of the UI component is on controls. The controls are meant to be
+building blocks that can be composed into more complicated controls.
+
 ## Dependencies
 
 * `libtool`: Combining static libraries when building.
@@ -19,6 +22,7 @@
 * `cmd/file-to-code/file-to-code` runs a tool which generates a header and
   source file from a normal file.
 * `example/bin/simple` runs the simple-example.
+* `example/bin/control` runs an example using controls.
 
 ## Linking
 

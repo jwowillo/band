@@ -4,6 +4,8 @@
 
 #include "raylib.h"
 
+#include <iostream>
+
 #define STBI_IMAGE_IMPLEMENTATION
 #include "external/stb_image.h"
 
@@ -577,14 +579,6 @@ Point RaylibInterface::MousePosition() const {
 }
 
 ::band::WindowArea RaylibInterface::DrawArea() const {
-  if (selected_texture_.has_value() &&
-      textures_.find(selected_texture_.value()) != textures_.end()) {
-    return ::band::WindowArea{
-      .width = static_cast<Real>(textures_.at(selected_texture_.value())->target.texture.width),
-      .height = static_cast<Real>(textures_.at(selected_texture_.value())->target.texture.height)
-    };
-  }
-
   return ::band::WindowArea{
     .width = static_cast<Real>(::GetScreenWidth()),
     .height = static_cast<Real>(::GetScreenHeight())

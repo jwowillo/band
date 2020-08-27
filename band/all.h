@@ -1,6 +1,6 @@
 #pragma once
 
 #include "band/control.h"
+#include "band/control/all.h"
 #include "band/interface.h"
-#include "band/stage.h"
-#include "band/styler.h"
+#include "band/scope.h"

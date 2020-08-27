@@ -3,12 +3,16 @@
 FLAGS = -g -Werror -Wall -Wextra -O2 -std=c++17 -fstack-protector -I .. -I../lib/raylib-2.6.0/src
 
 SRCS =
+SRCS += asset/font/helvetica.font.cc
 SRCS += control.cc
-SRCS += stage.cc
-SRCS += styler.cc
+SRCS += control/border.cc
+SRCS += control/fps.cc
+SRCS += control/label.cc
+SRCS += control/rectangle.cc
+SRCS += control/texture.cc
 SRCS += interface.cc
 SRCS += interface/raylib_interface.cc
-SRCS += asset/font/helvetica.font.cc
+SRCS += scope.cc
 OBJS = $(subst .cc,.o,$(SRCS))
 DEPS = $(subst .cc,.d,$(SRCS))
 
@@ -16,10 +20,20 @@ HEADERS =
 HEADERS += all.h
 HEADERS += asset/font/helvetica.font.h
 HEADERS += control.h
+HEADERS += control/all.h
+HEADERS += control/anchor.h
+HEADERS += control/border.h
+HEADERS += control/button.h
+HEADERS += control/fixed_panel.h
+HEADERS += control/fps.h
+HEADERS += control/label.h
+HEADERS += control/rectangle.h
+HEADERS += control/separator.h
+HEADERS += control/stack_panel.h
+HEADERS += control/texture.h
 HEADERS += interface.h
 HEADERS += interface/raylib_interface.h
-HEADERS += stage.h
-HEADERS += styler.h
+HEADERS += scope.h
 
 VERSION = v2.0.0-dev
 
