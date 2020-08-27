@@ -65,7 +65,7 @@ bool operator==(const Dimension& a, const Dimension& b);
 bool operator!=(const Dimension& a, const Dimension& b);
 
 // IsDimensionGreaterThanOrEqualTo returns if 'a' is greater than or equal to
-// b.
+// 'b'.
 bool IsDimensionGreaterThanOrEqualTo(
     const Dimension& a, const Dimension& b,
     Real pixels);

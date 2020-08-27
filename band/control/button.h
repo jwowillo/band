@@ -12,6 +12,10 @@ namespace band {
 namespace control {
 
 // Button that can be pressed.
+//
+// The button can have different colors based on the button state. The
+// last-action is updated after update calls and can be used to determine if the
+// button received an input.
 template <typename T>
 class Button : public Control {
   public:
@@ -55,6 +59,7 @@ class Button : public Control {
 
     ::band::Area Area(const Interface& interface) const override;
 
+    // Determine if the button was hovered, pressed, or nothing happened.
     void Update(
         const Point& position,
         const Interface& interface) override;

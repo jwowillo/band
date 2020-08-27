@@ -8,7 +8,9 @@
 namespace band {
 namespace control {
 
-// Anchor the control with respect to the reference area.
+// Anchor the control to an alignment with respect to the reference area.
+//
+// The anchor is in charge of drawing the control it is anchoring.
 template <typename T>
 class Anchor : public Control {
   public:

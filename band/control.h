@@ -9,9 +9,17 @@ class Control {
   public:
     virtual ~Control() = default;
 
+    // Area of the control based on the interface.
     virtual ::band::Area Area(const Interface& interface) const = 0;
 
+    // Update allows the control to determine if attributes need to be updated
+    // prior to being displayed.
+    //
+    // This is useful for when textures of controls are captured. Update can be
+    // called every frame and the texture can be recaptured if anything changed.
     virtual void Update(const Point& position, const Interface& interface) = 0;
+
+    // Display the control.
     virtual void Display(const Point& position, Interface& interface) = 0;
 
 };

@@ -10,7 +10,10 @@
 namespace band {
 namespace control {
 
-// StackPanel arranges a collection of controls in a stack.
+// StackPanel arranges a collection of controls in a stack with a passed
+// direction.
+//
+// The stacked controls can have an alignment with respect to the panel.
 template <typename T>
 class StackPanel : public Control {
   public:
