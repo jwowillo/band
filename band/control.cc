@@ -1,10 +1,37 @@
 #include "band/control.h"
 
+#include "band/scope.h"
+
 namespace band {
 
+::band::Area BaseControl::Area(const Interface&) const {
+  return ::band::Area{};
+}
+
+void BaseControl::CleanUp(Interface&) { }
+void BaseControl::Update(const Point&, Interface&) { }
+void BaseControl::Draw(const Point&, Interface&) { }
+
+void CleanUp(Interface& interface, Control& control) {
+  control.CleanUp(interface);
+}
+
+void Run(
+    const Color& clear_color,
+    const std::function<void()>& callback,
+    Interface& interface, Control& control) {
+  Scope scope{[&interface, &control]() { control.CleanUp(interface); }};
+
+  while (!interface.HasAction(Interface::Action::kClose)) {
+    Update(Point{}, interface, control);
+    callback();
+    DrawFrame(clear_color, Point{}, interface, control);
+  }
+}
+
 void Update(
-    const Point& position, const Interface& interface,
-    Control& control) {
+    const Point& position,
+    Interface& interface, Control& control) {
   control.Update(position, interface);
 }
 
@@ -14,7 +41,7 @@ void DrawFrame(
   interface.StartDrawing();
   interface.Clear(clear_color);
 
-  control.Display(position, interface);
+  control.Draw(position, interface);
 
   interface.StopDrawing();
 }

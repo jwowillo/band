@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "band/all.h"
 #include "band/asset/font/helvetica.font.h"
 #include "example/icon.image.h"

@@ -9,16 +9,16 @@ namespace band {
 namespace control {
 
 // Texture captures a texture of a control and displays it.
-class Texture : public Control {
+class Texture : public BaseControl {
   public:
     void CaptureControl(Interface& interface, Control& control);
-    void CleanUp(Interface& interface);
 
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
+    void CleanUp(Interface& interface) override;
+    void Update(const Point& position, Interface& interface) override;
 
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     std::optional<TextureId> texture_id_ = std::nullopt;

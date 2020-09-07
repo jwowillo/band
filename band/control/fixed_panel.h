@@ -13,7 +13,7 @@ namespace control {
 
 // FixedPanel displays controls in a single control as arranged.
 template <typename T>
-class FixedPanel : public Control {
+class FixedPanel : public BaseControl {
   public:
     template <typename Iter>
     void SetControls(const Iter& begin, const Iter& end);
@@ -23,9 +23,10 @@ class FixedPanel : public Control {
     // Area is the measured area bounding all of the controls.
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
+    void CleanUp(Interface& interface) override;
+    void Update(const Point& position, Interface& interface) override;
 
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     std::vector<std::pair<T, Point>> controls_{};
@@ -83,7 +84,17 @@ template <typename T>
 }
 
 template <typename T>
-void FixedPanel<T>::Update(const Point& position, const Interface& interface) {
+void FixedPanel<T>::CleanUp(Interface& interface) {
+  for (
+      typename decltype(controls_)::size_type i = 0u;
+      i < controls_.size();
+      i++) {
+    controls_[i].first->CleanUp(interface);
+  }
+}
+
+template <typename T>
+void FixedPanel<T>::Update(const Point& position, Interface& interface) {
   for (
       typename decltype(controls_)::size_type i = 0u;
       i < controls_.size();
@@ -101,7 +112,7 @@ void FixedPanel<T>::Update(const Point& position, const Interface& interface) {
 }
 
 template <typename T>
-void FixedPanel<T>::Display(const Point& position, Interface& interface) {
+void FixedPanel<T>::Draw(const Point& position, Interface& interface) {
   for (
       typename decltype(controls_)::size_type i = 0u;
       i < controls_.size();
@@ -114,7 +125,7 @@ void FixedPanel<T>::Display(const Point& position, Interface& interface) {
         control_position.y, controls_[i].second.y,
         interface.WindowArea().height);
 
-    controls_[i].first->Display(control_position, interface);
+    controls_[i].first->Draw(control_position, interface);
   }
 }
 

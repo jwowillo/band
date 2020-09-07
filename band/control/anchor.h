@@ -12,7 +12,7 @@ namespace control {
 //
 // The anchor is in charge of drawing the control it is anchoring.
 template <typename T>
-class Anchor : public Control {
+class Anchor : public BaseControl {
   public:
     Alignment HorizontalAlignment() const;
     void SetHorizontalAlignment(const Alignment& alignment);
@@ -25,12 +25,13 @@ class Anchor : public Control {
 
     void SetControl(T control);
 
-    // Area is the measured area of all the controls.
+    // Area is the reference area.
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
+    void CleanUp(Interface& interface) override;
+    void Update(const Point& position, Interface& interface) override;
 
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     Alignment horizontal_alignment_{};
@@ -80,7 +81,7 @@ void Anchor<T>::SetReferenceArea(const ::band::Area& area) {
 
 template <typename T>
 void Anchor<T>::SetControl(T control) {
-  control_ = control;
+  control_ = std::forward<T>(control);
 }
 
 template <typename T>
@@ -89,7 +90,16 @@ template <typename T>
 }
 
 template <typename T>
-void Anchor<T>::Update(const Point& position, const Interface& interface) {
+void Anchor<T>::CleanUp(Interface& interface) {
+  if (control_ == std::nullopt) {
+    return;
+  }
+
+  control_.value()->CleanUp(interface);
+}
+
+template <typename T>
+void Anchor<T>::Update(const Point& position, Interface& interface) {
   if (control_ == std::nullopt) {
     return;
   }
@@ -126,7 +136,7 @@ void Anchor<T>::Update(const Point& position, const Interface& interface) {
 }
 
 template <typename T>
-void Anchor<T>::Display(const Point& position, Interface& interface) {
+void Anchor<T>::Draw(const Point& position, Interface& interface) {
   if (control_ == std::nullopt) {
     return;
   }
@@ -159,7 +169,7 @@ void Anchor<T>::Display(const Point& position, Interface& interface) {
   offset.x = AddDimensions(offset.x, position.x, interface.WindowArea().width);
   offset.y = AddDimensions(offset.y, position.y, interface.WindowArea().height);
 
-  control_.value()->Display(offset, interface);
+  control_.value()->Draw(offset, interface);
 }
 
 }  // namespace control

@@ -15,7 +15,7 @@ void Texture::CaptureControl(Interface& interface, Control& control) {
   texture_id_ = interface.CreateBlankTexture(area_);
   interface.SelectTexture(texture_id_.value());
 
-  control.Display(band::Point{}, interface);
+  control.Draw(band::Point{}, interface);
 
   interface.UnselectTexture();
 }
@@ -37,11 +37,9 @@ void Texture::CleanUp(Interface& interface) {
   return area_;
 }
 
-void Texture::Update(const Point&, const Interface&) {
-  return;
-}
+void Texture::Update(const Point&, Interface&) { }
 
-void Texture::Display(const Point& position, Interface& interface) {
+void Texture::Draw(const Point& position, Interface& interface) {
   if (!texture_id_.has_value()) {
     return;
   }

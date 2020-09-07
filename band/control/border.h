@@ -12,7 +12,7 @@ namespace control {
 //
 // The thickness is based on the smallest leg of the window area if the
 // thickness is a ratio.
-class Border : public Control {
+class Border : public BaseControl {
   public:
     Dimension Thickness() const;
     void SetThickness(const Dimension& thickness);
@@ -31,9 +31,7 @@ class Border : public Control {
 
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
-
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     ::band::Area area_{};

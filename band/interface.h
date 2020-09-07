@@ -91,6 +91,7 @@ struct Point {
   Dimension x{};
   Dimension y{};
 };
+bool operator==(const Point& a, const Point& b);
 bool operator!=(const Point& a, const Point& b);
 
 // Line.
@@ -98,6 +99,7 @@ struct Line {
   Point a{};
   Point b{};
 };
+bool operator==(const Line& a, const Line& b);
 bool operator!=(const Line& a, const Line& b);
 
 // Circle.
@@ -105,6 +107,7 @@ struct Circle {
   Point center{};
   Dimension radius{};
 };
+bool operator==(const Circle& a, const Circle& b);
 bool operator!=(const Circle& a, const Circle& b);
 
 // Triangle.
@@ -113,6 +116,7 @@ struct Triangle {
   Point b{};
   Point c{};
 };
+bool operator==(const Triangle& a, const Triangle& b);
 bool operator!=(const Triangle& a, const Triangle& b);
 
 // Rectangle.
@@ -120,6 +124,7 @@ struct Rectangle {
   Point bottom_left{};
   Point top_right{};
 };
+bool operator==(const Rectangle& a, const Rectangle& b);
 bool operator!=(const Rectangle& a, const Rectangle& b);
 
 // Area.
@@ -127,6 +132,7 @@ struct Area {
   Dimension width{};
   Dimension height{};
 };
+bool operator==(const Area& a, const Area& b);
 bool operator!=(const Area& a, const Area& b);
 
 // WindowArea is just like an area but always specified in pixels.
@@ -134,6 +140,7 @@ struct WindowArea {
   Real width{};
   Real height{};
 };
+bool operator==(const WindowArea& a, const WindowArea& b);
 bool operator!=(const WindowArea& a, const WindowArea& b);
 
 // Component of a color.
@@ -146,6 +153,7 @@ struct Color {
   Component b{};
   Component a{};
 };
+bool operator==(const Color& a, const Color& b);
 bool operator!=(const Color& a, const Color& b);
 
 // Leg of a rectangle.
@@ -178,6 +186,7 @@ class Interface {
     virtual ImageId LoadImage(const File& file) = 0;
     virtual void DeleteImage(ImageId id) = 0;
     virtual void DeleteAllImages() = 0;
+    virtual Area ImageArea(ImageId id) const = 0;
 
     virtual FontId LoadFont(const File& file) = 0;
     virtual void DeleteFont(FontId id) = 0;
@@ -190,6 +199,7 @@ class Interface {
     virtual void SelectTexture(TextureId id) = 0;
     virtual void UnselectTexture() = 0;
     virtual void DrawTexture(TextureId id, const Point& position) = 0;
+    virtual Area TextureArea(TextureId id) const = 0;
 
     virtual void Clear(const Color& color) = 0;
     // DrawLine with a thickness determined by the size fo the leg of the window's

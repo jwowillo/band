@@ -15,7 +15,7 @@ namespace control {
 //
 // The stacked controls can have an alignment with respect to the panel.
 template <typename T>
-class StackPanel : public Control {
+class StackPanel : public BaseControl {
   public:
     ::band::Alignment Alignment() const;
     void SetAlignment(const ::band::Alignment& alignment);
@@ -31,9 +31,10 @@ class StackPanel : public Control {
     // Area is the measured area of all the controls.
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
+    void CleanUp(Interface& interface) override;
+    void Update(const Point& position, Interface& interface) override;
 
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     ::band::Alignment alignment_{};
@@ -110,7 +111,17 @@ template <typename T>
 }
 
 template <typename T>
-void StackPanel<T>::Update(const Point& position, const Interface& interface) {
+void StackPanel<T>::CleanUp(Interface& interface) {
+  for (
+      typename decltype(controls_)::size_type i = 0u;
+      i < controls_.size();
+      i++) {
+    controls_[i]->CleanUp(interface);
+  }
+}
+
+template <typename T>
+void StackPanel<T>::Update(const Point& position, Interface& interface) {
   ::band::Area total_area = this->Area(interface);
   Point current_position = position;
 
@@ -151,7 +162,7 @@ void StackPanel<T>::Update(const Point& position, const Interface& interface) {
 }
 
 template <typename T>
-void StackPanel<T>::Display(const Point& position, Interface& interface) {
+void StackPanel<T>::Draw(const Point& position, Interface& interface) {
   ::band::Area total_area = this->Area(interface);
   Point current_position = position;
 
@@ -177,7 +188,7 @@ void StackPanel<T>::Display(const Point& position, Interface& interface) {
     anchor.SetReferenceArea(reference_area);
     anchor.SetControl(controls_[i]);
 
-    anchor.Display(current_position, interface);
+    anchor.Draw(current_position, interface);
 
     if (direction_ == Direction::kVertical) {
       current_position.y = AddDimensions(

@@ -17,7 +17,7 @@ namespace control {
 // last-action is updated after update calls and can be used to determine if the
 // button received an input.
 template <typename T>
-class Button : public Control {
+class Button : public BaseControl {
   public:
     enum class Action { kNone, kPress, kHover };
 
@@ -59,12 +59,12 @@ class Button : public Control {
 
     ::band::Area Area(const Interface& interface) const override;
 
-    // Determine if the button was hovered, pressed, or nothing happened.
-    void Update(
-        const Point& position,
-        const Interface& interface) override;
+    void CleanUp(Interface& interface) override;
 
-    void Display(const Point& position, Interface& interface) override;
+    // Determine if the button was hovered, pressed, or nothing happened.
+    void Update(const Point& position, Interface& interface) override;
+
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     Color fill_color_{};
@@ -186,7 +186,7 @@ void Button<T>::SetArea(const std::optional<::band::Area>& area) {
 
 template <typename T>
 void Button<T>::SetControl(T control) {
-  control_ = control;
+  control_ = std::forward<T>(control);
 }
 
 template <typename T>
@@ -208,9 +208,16 @@ template <typename T>
 }
 
 template <typename T>
-void Button<T>::Update(
-    const Point& position,
-    const Interface& interface) {
+void Button<T>::CleanUp(Interface& interface) {
+  if (!control_.has_value()) {
+    return;
+  }
+
+  control_.value()->CleanUp(interface);
+}
+
+template <typename T>
+void Button<T>::Update(const Point& position, Interface& interface) {
   ::band::Area area = Area(interface);
 
   Point mouse_position = interface.MousePosition();
@@ -239,7 +246,7 @@ void Button<T>::Update(
 }
 
 template <typename T>
-void Button<T>::Display(const Point& position, Interface& interface) {
+void Button<T>::Draw(const Point& position, Interface& interface) {
   ::band::Area area = Area(interface);
 
   Rectangle rectangle{};
@@ -273,9 +280,9 @@ void Button<T>::Display(const Point& position, Interface& interface) {
     anchor.SetControl(control_.value());
   }
 
-  rectangle.Display(position, interface);
-  border.Display(position, interface);
-  anchor.Display(position, interface);
+  rectangle.Draw(position, interface);
+  border.Draw(position, interface);
+  anchor.Draw(position, interface);
 }
 
 }  // namespace control

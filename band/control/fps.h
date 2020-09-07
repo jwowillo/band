@@ -10,13 +10,9 @@ namespace control {
 //
 // The area isn't calculated because it is meant to be an overlay left to the
 // interface.
-class Fps : public Control {
+class Fps : public BaseControl {
   public:
-    ::band::Area Area(const Interface& interface) const override;
-
-    void Update(const Point& position, const Interface& interface) override;
-
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
 };
 

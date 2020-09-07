@@ -7,7 +7,7 @@ namespace band {
 namespace control {
 
 // Label is a control that displays text.
-class Label : public Control {
+class Label : public BaseControl {
   public:
     ::band::Text Text() const;
     void SetText(const ::band::Text& text);
@@ -24,9 +24,7 @@ class Label : public Control {
     // Area is the measured size of the text.
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
-
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     ::band::Text text_{};

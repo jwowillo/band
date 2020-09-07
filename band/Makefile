@@ -60,3 +60,5 @@ interface/raylib_interface.o: interface/raylib_interface.cc
 
 clean:
 	rm -rf bin $(OBJS) $(DEPS)
+
+-include $(DEPS)

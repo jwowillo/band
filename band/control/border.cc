@@ -39,9 +39,7 @@ Real Border::RealBorderThickness(const Interface& interface) const {
   return area_;
 }
 
-void Border::Update(const Point&, const Interface&) { }
-
-void Border::Display(const Point& position, Interface& interface) {
+void Border::Draw(const Point& position, Interface& interface) {
   Dimension thickness{};
   thickness.scalar = RealBorderThickness(interface);
   thickness.unit = Unit::kPixel;
@@ -73,10 +71,10 @@ void Border::Display(const Point& position, Interface& interface) {
         thickness, interface.WindowArea().height)
   };
 
-  vertical.Display(top_left, interface);
-  horizontal.Display(top_left, interface);
-  vertical.Display(top_right, interface);
-  horizontal.Display(bottom_left, interface);
+  vertical.Draw(top_left, interface);
+  horizontal.Draw(top_left, interface);
+  vertical.Draw(top_right, interface);
+  horizontal.Draw(bottom_left, interface);
 }
 
 }  // namespace control

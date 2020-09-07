@@ -39,9 +39,7 @@ void Label::SetFontId(::band::FontId font_id) {
   return interface.MeasureText(text_, this->FontSize(), this->FontId());
 }
 
-void Label::Update(const Point&, const Interface&) { }
-
-void Label::Display(const Point& position, Interface& interface) {
+void Label::Draw(const Point& position, Interface& interface) {
   interface.DrawText(
       text_, position,
       this->FontSize(), this->FontColor(), this->FontId());

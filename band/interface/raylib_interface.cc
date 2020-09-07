@@ -244,6 +244,25 @@ void RaylibInterface::DeleteAllImages() {
   }
 }
 
+Area RaylibInterface::ImageArea(ImageId id) const {
+  if (images_.find(id) == images_.end()) {
+    return Area{};
+  }
+
+  ::Image image = images_.at(id)->image;
+
+  return Area{
+    .width = Dimension{
+      .scalar = static_cast<Real>(image.width),
+      .unit = Unit::kPixel
+    },
+    .height = Dimension{
+      .scalar = static_cast<Real>(image.height),
+      .unit = Unit::kPixel
+    }
+  };
+}
+
 void RaylibInterface::DeleteFont(FontId id) {
   if (fonts_.find(id) == fonts_.end()) {
     return;
@@ -362,6 +381,25 @@ void RaylibInterface::DrawTexture(TextureId id, const Point& position) {
       },
       ::Vector2{ .x = static_cast<float>(x), .y = static_cast<float>(y) },
       ::Color{ .r = 0xff, .g = 0xff, .b = 0xff, .a = 0xff });
+}
+
+Area RaylibInterface::TextureArea(TextureId id) const {
+  if (textures_.find(id) == textures_.end()) {
+    return Area{};
+  }
+
+  ::Texture2D texture = textures_.at(id)->target.texture;
+
+  return Area{
+    .width = Dimension{
+      .scalar = static_cast<Real>(texture.width),
+      .unit = Unit::kPixel
+    },
+    .height = Dimension{
+      .scalar = static_cast<Real>(texture.height),
+      .unit = Unit::kPixel
+    }
+  };
 }
 
 void RaylibInterface::Clear(const Color& color) {

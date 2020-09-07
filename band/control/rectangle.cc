@@ -19,9 +19,7 @@ void Rectangle::SetColor(const ::band::Color& color) {
   return area_;
 }
 
-void Rectangle::Update(const Point&, const Interface&) { }
-
-void Rectangle::Display(const Point& position, Interface& interface) {
+void Rectangle::Draw(const Point& position, Interface& interface) {
   ::band::Area area = this->Area(interface);
 
   Point bottom_left = position;

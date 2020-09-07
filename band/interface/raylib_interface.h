@@ -45,6 +45,7 @@ class RaylibInterface : public Interface {
     ImageId LoadImage(const File&) override;
     void DeleteImage(ImageId id) override;
     void DeleteAllImages() override;
+    Area ImageArea(ImageId id) const override;
 
     FontId LoadFont(const File&) override;
     void DeleteFont(FontId id) override;
@@ -57,6 +58,7 @@ class RaylibInterface : public Interface {
     void SelectTexture(TextureId id) override;
     void UnselectTexture() override;
     void DrawTexture(TextureId id, const Point& position) override;
+    Area TextureArea(TextureId id) const override;
 
     void Clear(const Color& color) override;
     void DrawLine(

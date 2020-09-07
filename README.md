@@ -2,8 +2,14 @@
 
 `band` is a c++ media-library.
 
-The focus of the UI component is on controls. The controls are meant to be
+The library tries to allow allow cross-platform applications to be created in
+the simplest way possible while maintaining flexibility.
+
+The focus of the UI-component is on controls. The controls are meant to be
 building blocks that can be composed into more complicated controls.
+
+Assets are compiled into the program itself. This prevents having to be
+concerned about bundling assets differently for different platforms.
 
 ## Dependencies
 

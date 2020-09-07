@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 #include "band/all.h"
 #include "band/asset/font/helvetica.font.h"
@@ -111,26 +112,24 @@ int main() {
   band::WindowArea last_window_area{};
   PointerButton::Action last_action{};
 
-  while (!interface.HasAction(band::Interface::Action::kClose)) {
-    band::Update(band::Point{}, interface, update_anchor);
+  band::Run(
+      band::Color{ .r = 0xff, .g = 0xff, .b = 0xff, .a = 0xff },
+      [&button, &texture, &interface, &last_action,
+      &last_window_area, &first_frame, &stack_panel]() {
+        PointerButton::Action current_action = button.LastAction();
+        if (current_action == PointerButton::Action::kPress) {
+          std::cout << "button pressed" << std::endl;
+        }
 
-    PointerButton::Action current_action = button.LastAction();
-    if (current_action == PointerButton::Action::kPress) {
-      std::cout << "button pressed" << std::endl;
-    }
+        if (first_frame ||
+            last_window_area != interface.WindowArea() ||
+            current_action != last_action) {
+          first_frame = false;
 
-    if (first_frame ||
-        last_window_area != interface.WindowArea() ||
-        current_action != last_action) {
-      first_frame = false;
-
-      texture.CaptureControl(interface, stack_panel);
-      last_window_area = interface.WindowArea();
-      last_action = current_action;
-    }
-
-    band::DrawFrame(
-        band::Color{ .r = 0xff, .g = 0xff, .b = 0xff, .a = 0xff },
-        band::Point{}, interface, fixed_panel);
-  }
+          texture.CaptureControl(interface, stack_panel);
+          last_window_area = interface.WindowArea();
+          last_action = current_action;
+        }
+      },
+      interface, fixed_panel);
 }

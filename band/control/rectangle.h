@@ -7,7 +7,7 @@ namespace band {
 namespace control {
 
 // Rectangle is a solid color filling an area.
-class Rectangle : public Control {
+class Rectangle : public BaseControl {
   public:
     ::band::Color Color() const;
     void SetColor(const ::band::Color& color);
@@ -16,9 +16,7 @@ class Rectangle : public Control {
 
     ::band::Area Area(const Interface& interface) const override;
 
-    void Update(const Point& position, const Interface& interface) override;
-
-    void Display(const Point& position, Interface& interface) override;
+    void Draw(const Point& position, Interface& interface) override;
 
   private:
     ::band::Area area_{};
