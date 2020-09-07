@@ -7,7 +7,10 @@
 
 int main() {
   std::unique_ptr<band::Interface> created_interface = band::DefaultInterface();
-  band::Interface& interface = *created_interface;
+
+  using Interface =
+    band::interface::DebugInterfaceDecorator<std::unique_ptr<band::Interface>>;
+  Interface interface{std::move(created_interface)};
 
   interface.SetTitle("control");
   interface.SetTargetFps(60u);
@@ -60,7 +63,6 @@ int main() {
   button_control.SetFontId(font_id);
 
   using PointerStackPanel = band::control::StackPanel<band::Control*>;
-  using PointerFixedPanel = band::control::FixedPanel<band::Control*>;
   using PointerAnchor = band::control::Anchor<band::Control*>;
   using PointerButton = band::control::Button<band::Control*>;
 
@@ -103,11 +105,6 @@ int main() {
       .height = band::Dimension{ .scalar = 1.0, .unit = band::Unit::kRatio } });
   anchor.SetControl(&texture);
 
-  band::control::Fps fps{};
-
-  PointerFixedPanel fixed_panel{};
-  fixed_panel.SetControls({ {&fps, band::Point{}}, {&anchor, band::Point{}} });
-
   bool first_frame = true;
   band::WindowArea last_window_area{};
   PointerButton::Action last_action{};
@@ -131,5 +128,5 @@ int main() {
           last_action = current_action;
         }
       },
-      interface, fixed_panel);
+      interface, anchor);
 }
