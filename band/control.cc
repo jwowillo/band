@@ -18,13 +18,11 @@ void CleanUp(Interface& interface, Control& control) {
 
 void Run(
     const Color& clear_color,
-    const std::function<void()>& callback,
     Interface& interface, Control& control) {
   Scope scope{[&interface, &control]() { control.CleanUp(interface); }};
 
   while (!interface.HasAction(Interface::Action::kClose)) {
     Update(Point{}, interface, control);
-    callback();
     DrawFrame(clear_color, Point{}, interface, control);
   }
 }

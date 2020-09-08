@@ -25,6 +25,10 @@ class Control {
     //
     // This is useful for when textures of controls are captured. Update can be
     // called every frame and the texture can be recaptured if anything changed.
+    //
+    // The point is passed to determine where the control will eventually be
+    // drawn onto the screen. This is useful for cases like determining if
+    // a control has been interacted with.
     virtual void Update(const Point& position, Interface& interface) = 0;
 
     // Draw the control.
@@ -45,12 +49,8 @@ class BaseControl : public Control {
 };
 
 // Run the root control until the window is closed and then clean up.
-//
-// The frame callback is called after update but before the frame is drawn every
-// frame.
 void Run(
     const Color& clear_color,
-    const std::function<void()>& callback,
     Interface& interface, Control& control);
 
 // CleanUp all controls starting at the root control.

@@ -170,7 +170,10 @@ enum class Leg { kWidth, kHeight };
 // vertical-drawing-axis goes from top-to-bottom.
 class Interface {
   public:
-    enum class Action { kLeftClick, kRightClick, kClose, kBackspace };
+    enum class Action {
+      kLeftClick, kRightClick, kClose, kSpace, kBackspace,
+      kUp, kDown, kLeft, kRight,
+    };
 
     virtual ~Interface() = default;
 

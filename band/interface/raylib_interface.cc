@@ -573,8 +573,18 @@ bool RaylibInterface::HasAction(const Action& action) const {
   case Action::kRightClick:
     return !::IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
       ::IsMouseButtonPressed(MOUSE_RIGHT_BUTTON);
+  case Action::kSpace:
+    return ::IsKeyDown(KEY_SPACE);
   case Action::kBackspace:
     return ::IsKeyDown(KEY_BACKSPACE);
+  case Action::kUp:
+    return ::IsKeyDown(KEY_UP);
+  case Action::kDown:
+    return ::IsKeyDown(KEY_DOWN);
+  case Action::kLeft:
+    return ::IsKeyDown(KEY_LEFT);
+  case Action::kRight:
+    return ::IsKeyDown(KEY_RIGHT);
   case Action::kClose:
     return !is_open_ || ::WindowShouldClose();
   default:
