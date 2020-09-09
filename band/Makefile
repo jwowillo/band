@@ -35,6 +35,7 @@ HEADERS += control/separator.h
 HEADERS += control/stack_panel.h
 HEADERS += control/texture.h
 HEADERS += interface.h
+HEADERS += interface/all.h
 HEADERS += interface/raylib_interface.h
 HEADERS += interface/base_interface_decorator.h
 HEADERS += interface/debug_interface_decorator.h
